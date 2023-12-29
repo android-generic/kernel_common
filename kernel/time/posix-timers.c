@@ -498,6 +498,12 @@ static int common_timer_create(struct k_itimer *new_timer)
 static int do_timer_create(clockid_t which_clock, struct sigevent *event,
 			   timer_t __user *created_timer_id)
 {
+	if(which_clock == CLOCK_REALTIME_ALARM){
+		which_clock = CLOCK_REALTIME;
+	}
+	if(which_clock == CLOCK_BOOTTIME_ALARM){
+		which_clock = CLOCK_BOOTTIME;
+	}
 	const struct k_clock *kc = clockid_to_kclock(which_clock);
 	struct k_itimer *new_timer;
 	int error, new_timer_id;
