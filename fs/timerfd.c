@@ -415,6 +415,15 @@ SYSCALL_DEFINE2(timerfd_create, int, clockid, int, flags)
 	BUILD_BUG_ON(TFD_CLOEXEC != O_CLOEXEC);
 	BUILD_BUG_ON(TFD_NONBLOCK != O_NONBLOCK);
 
+	// disabling alarms for android on x86 platforms
+	// doing it in a way that won't cause errors in frameworks/base/apex/jobscheduler/service/jni/com_android_server_alarm_AlarmManagerService.cpp
+	if(clockid == CLOCK_REALTIME_ALARM){
+		clockid = CLOCK_REALTIME;
+	}
+	if(clockid == CLOCK_BOOTTIME_ALARM){
+		clockid = CLOCK_BOOTTIME;
+	}
+
 	if ((flags & ~TFD_CREATE_FLAGS) ||
 	    (clockid != CLOCK_MONOTONIC &&
 	     clockid != CLOCK_REALTIME &&
